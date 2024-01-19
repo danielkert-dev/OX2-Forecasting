@@ -56,9 +56,9 @@ watch(
 </script>
 
 <template>
-  <nav class="d-flex navbar">
-    <div class="ms-2">
-      <h4 class="mt-2">
+  <nav class="d-flex navbar fixed-top ">
+    <div class="ms-2 iconWrap">
+      <h4 class="">
         <img
           style="margin-top: -0.2rem"
           width="45"
@@ -70,7 +70,7 @@ watch(
     </div>
 
     <div
-      class="d-flex flex-wrap justify-content-center align-content-center"
+      class="middleWrap ms-1 d-flex flex-wrap justify-content-center align-content-center"
       v-if="router.currentRoute.value.name !== 'about'"
     >
       <select
@@ -112,10 +112,12 @@ watch(
       </div>
     </div>
 
-    <div class="">
+    <div class="me-2 ">
       <WpAPIComp />
     </div>
   </nav>
+
+  <div class="navSpacer"></div>
 </template>
 
 <style scoped lang="scss">
@@ -126,29 +128,93 @@ $text-color: #f8f7f6;
 
 nav {
   width: 100vw;
-  background-color: $main-color !important;
   color: $text-color !important;
 }
 
+@media screen and (min-width: 1350px) {
+  nav::before {
+  content: "";
+  position: absolute;
+  top: 40%;
+  margin-top: -.3rem;
+  left: 41%;
+  right: 0;
+  bottom: 0;
+  background-image: url("../../assets/images/wave4.svg");
+  z-index: -1;
+  opacity: 1;
+  background-repeat: no-repeat;
+  background-size: 100% 150%;
+  background-position: center;
+
+  transform: scale(6);
+  background-position: top;
+  filter:brightness(.8);
+
+}
+}
+
+.middleWrap {
+  width: 30rem;
+}
+
+@media screen and (max-width: 1350px) {
+  nav {
+    background-color: $secondary-color !important;
+  }
+
+  .middleWrap {
+    width: fit-content;
+  }
+}
+
+.navSpacer {
+  height: 5rem;
+}
+
+.iconWrap {
+  height: 4rem;
+}
+
+
+
+@media screen and (max-width: 600px) {
+  
+  .iconWrap {
+    width: 100%;
+    text-align: center;
+  }
+
+  .navSpacer {
+  height: 5rem;
+}
+
+  
+}
+
+
 input,
 select {
-  background-color: $third-color;
+  background-color: $secondary-color;
   color: $text-color;
   color-scheme: dark;
   border: none;
+  filter:brightness(1.2);
 }
 
 select:focus,
 select:active,
 input:focus,
 input:active {
-  background-color: $third-color;
+  background-color: $secondary-color;
   color: $text-color;
   border: none;
+  outline: none;
 }
 
+
 .custom-select {
-  background: $third-color
+  background: $secondary-color
     url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='white' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e")
     no-repeat right 0.75rem center/8px 10px !important;
 }

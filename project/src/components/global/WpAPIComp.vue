@@ -98,7 +98,7 @@ function setToTextStore() {
 <template>
   <div class="h-100 d-flex flex-wrap justify-content-center align-content-center">
     <select
-      class="custom-select lang-select form-select"
+      class="custom-select lang-select rounded"
       v-model="selectedLanguage"
       @change="updateLanguage"
     >
@@ -115,23 +115,37 @@ $third-color: #343434;
 $text-color: #f8f7f6;
 
 .lang-select {
-  min-width: 5rem;
   display: flex;
   justify-content: center;
   align-content: center;
-}
-
-input,
-select {
-  background-color: $third-color;
+  background-color: $secondary-color;
   color: $text-color;
   color-scheme: dark;
   border: none;
+  padding: .45rem;
+  padding-left: .6rem;
+  padding-right: .6rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  filter:brightness(1.2);
 }
 
-.custom-select {
-  background: $third-color
-    url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='white' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e")
-    no-repeat right 0.75rem center/8px 10px !important;
+.lang-select:focus,
+.lang-select:active {
+  background-color: $secondary-color;
+  color: $text-color;
+  color-scheme: dark;
+  border: none;
+  outline: none;
 }
+
+@media screen and (min-width: 1350px) {
+  .lang-select {
+    margin-left: 150px;
+  }
+  
+}
+
+
 </style>

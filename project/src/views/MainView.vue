@@ -156,6 +156,19 @@ function prev() {
   swiperRef.value.slidePrev(); // should work
 }
 
+function nextWeek() {
+  for (let i = 0; i < 7; i++) {
+    swiperRef.value.slideNext(); // should work
+  }
+}
+
+function prevWeek() {
+  for (let i = 0; i < 7; i++) {
+    swiperRef.value.slidePrev(); // should work
+  }
+}
+
+
 /* //@ Other*
  */
 
@@ -205,6 +218,16 @@ function weatherCodeToIcon(code) {
   return weatherCode.day.image;
 }
 
+
+function weatherToColor(code) {
+  if (!code) {
+    return ""; // or handle the case where date is undefined/null
+  }
+  const weatherCode = weatherCodes[0][code];
+  return weatherCode.day.color;
+
+}
+
 /* chart*/
 const chartData = ref([
   ["Type", "KWH"], // Add a new column for colors
@@ -217,6 +240,8 @@ const chartOptions = ref({
   //    title: "KWH",
   titleTextStyle: { alignment: "center" },
   legend: { position: "left", alignment: "center" },
+  chartArea: {width: '100%', height: '75%'},
+
   //   chartArea: {left: 0},
 
   backgroundColor: { fill: "transparent" },
@@ -259,10 +284,10 @@ const accuracyType = ref("PieChart");
 
 <template>
   <div class="container">
-    <p class="w-100 dateTop text-muted">
+    <!-- <p class="w-100 dateTop text-muted">
       {{ convertDate(selectedData.date) }} <br />
       {{ selectedData.age }}
-    </p>
+    </p> -->
 
     <!--   :scrollbar="{ hide: true, dragSize: '50%', draggable: true, snapOnRelease: true }" -->
     <!-- Clickable sliders -->
@@ -281,6 +306,7 @@ const accuracyType = ref("PieChart");
       @swiper="getRef"
       class="mySwiper"
     >
+    {{ console.log(dailyData) }}
       <template v-for="(data, index) in dailyData" :key="data.date">
         <!-- if not active then notActiveSlide class -->
         <swiper-slide
@@ -291,15 +317,19 @@ const accuracyType = ref("PieChart");
           }"
           :id="data.date"
         >
-          <div
+                  <div
             class="mySlideData d-flex align-items-end justify-content-center rounded"
             :style="{
-              backgroundColor: `hsl(${Math.floor(Math.random() * 360)}, 20%, 80%)`,
+              backgroundColor: `${weatherToColor(data.weather)}`,
               height: `${data.energyKWh * 3}px`,
             }"
           >
-            <p class="mySliderDate text-center">
+          <!-- <span class="text-muted">{{ data.energyKWh }}</span> -->
+          <span class="mySliderDate text-center">
               {{ replaceDashesWithDot(removeYear(data.date)) }}
+            </span>
+
+            <p class="mySliderDate text-center">
             </p>
           </div>
         </swiper-slide>
@@ -307,13 +337,15 @@ const accuracyType = ref("PieChart");
     </swiper>
 
     <div class="d-flex w-100 justify-content-center">
-      <button @click="prev()" class="append-buttons btn" style="font-size: 1.5rem">
-        <
-      </button>
-      <buton @click="next()" class="append-buttons btn" style="font-size: 1.5rem"
-        >></buton
-      >
-    </div>
+      <button @click="prevWeek()" class="append-buttons btn" style="font-size: 1.5rem"><<</button>
+      <button @click="prev()" class="append-buttons btn" style="font-size: 1.5rem"><</button>
+      
+      <button @click="next()" class="append-buttons btn" style="font-size: 1.5rem"
+        >></button>
+        <button @click="nextWeek()" class="append-buttons btn" style="font-size: 1.5rem">
+          >>
+          </button>
+  </div>
     <!-- {{ selectedSlide }}
 {{ selectedDate }}
 {{ dailyData[1] }} -->
@@ -323,6 +355,21 @@ const accuracyType = ref("PieChart");
     <div class="">
       <div class="mainBox mt-1">
         <div class="row w-100 d-flex justify-content-between mx-auto g-4">
+
+          <div
+            class="rounded col-md-3 p-3 infoBox d-flex justify-content-center align-content-center"
+          >
+            <div class="d-flex flex-column justify-content-center align-content-center">
+              <p class="w-100 text-center" style="font-size: 2rem; margin-bottom: 0.5rem">
+                ⚡
+              </p>
+              <p class="card-text text-center mt-4" style="margin-bottom: -1rem">
+                Energy Production: {{ selectedData.energyKWh }}KWH
+              </p>
+            </div>
+          </div>
+
+
           <div
             class="rounded col-md-3 p-3 infoBox d-flex justify-content-center align-content-center"
           >
@@ -333,23 +380,11 @@ const accuracyType = ref("PieChart");
                 alt=""
               />
               <p class="card-text weatherText text-center mt-3">
-                {{ selectedData.temperature }}°C
+                temperature: {{ selectedData.temperature }}°C
               </p>
             </div>
           </div>
 
-          <div
-            class="rounded col-md-3 p-3 infoBox d-flex justify-content-center align-content-center"
-          >
-            <div class="d-flex flex-column justify-content-center align-content-center">
-              <p class="w-100 text-center" style="font-size: 2rem; margin-bottom: 0.5rem">
-                ⚡
-              </p>
-              <p class="card-text text-center mt-4" style="margin-bottom: -1rem">
-                {{ selectedData.energyKWh }}KWH
-              </p>
-            </div>
-          </div>
 
           <div class="rounded col-md-3 px-3 infoBox">
             <p class="card-text text-center accuracyNumber">
@@ -365,7 +400,7 @@ const accuracyType = ref("PieChart");
           </div>
 
           <div class="row mx-auto">
-            <div class="col-md-6 p-3">
+            <div class="col-sm-6 p-2">
               <!-- When all the data is available -->
               <!-- <p class="pieTitle">KWH</p> -->
               <GChart
@@ -377,8 +412,8 @@ const accuracyType = ref("PieChart");
             </div>
 
             <div class="col-md-6 p-5">
-              <h1>Description</h1>
-              <br /><br />
+                <h1>Description</h1>
+              <br />
               <!-- From wordpress add text with integrated data -->
               <p>
                 Lorem ipsum dolor sit, amet consectetur adipisicing elit. Rem officia
@@ -407,7 +442,12 @@ $text-color: #f8f7f6;
 }
 
 .mySwiper {
-  height: 20rem;
+  height: 18rem;
+  cursor: grab;
+}
+
+.mySwiper:active {
+  cursor: grabbing;
 }
 
 .mySwiper::before {
@@ -445,10 +485,10 @@ $text-color: #f8f7f6;
 
 .mySlideData {
   min-height: 10%;
-  max-height: 100%;
+  max-height: 13rem;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
   width: 100%;
 }
 
@@ -496,7 +536,7 @@ $text-color: #f8f7f6;
 }
 
 .notActiveSlide {
-  opacity: 0.3;
+  opacity: 0.4;
 }
 
 /* Data */
@@ -522,6 +562,7 @@ $text-color: #f8f7f6;
 
 .infoBox {
   background-color: $text-color;
+  min-height: 10rem;
 }
 
 .shareChart {

@@ -1,3 +1,5 @@
+
+
 export function processDailyData(weatherData) {
         /* //@ Process 
         - Group irradiance values by day and calculate rounded daily average

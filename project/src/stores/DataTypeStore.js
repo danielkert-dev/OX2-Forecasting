@@ -6,6 +6,7 @@ export const useDataTypeStore = defineStore('dataType', {
         selectedDate: new Date().toISOString().slice(0, 10),
         firstDate: '',
         lastDate: '',
+
     }),
     actions: {
 

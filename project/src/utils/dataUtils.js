@@ -1,4 +1,4 @@
-
+import { monthlyData } from "../components/MonthlyDataComp";
 
 export function processDailyData(weatherData) {
         /* //@ Process 
@@ -99,7 +99,6 @@ export function processDailyData(weatherData) {
           // remove last data completeData
           completeData.pop();
     
-        
           // console.log(completeData);
           return completeData;
   }
@@ -116,9 +115,10 @@ export function processMonthlyData(weatherData) {
   accuracy: accuracy,
   */
 
-  console.log('processMonthlyData')
+  const data = monthlyData
+  // console.log(data)
 
-  return weatherData
+  return data
 
 }
 
@@ -126,7 +126,7 @@ export function processMonthlyData(weatherData) {
 export function processYearlyData(weatherData) {
 
 
-  console.log('pr')
+  // console.log('pr')
 
   return weatherData
 }

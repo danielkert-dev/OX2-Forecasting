@@ -20,8 +20,6 @@ const modules = [Pagination, Scrollbar];
 /* //@ Init
  */
 
-useTextStore().setText();
-
 const udts = useDataTypeStore();
 // const dataType = 'daily';
 const dataType = udts.dataType;
@@ -32,7 +30,6 @@ const firstDate = ref("");
 const lastDate = ref("");
 
 const textData = ref("");
-const textList = ref([]);
 
 const selectedSlide = ref("");
 
@@ -45,19 +42,16 @@ onMounted(async () => {
   await useDataStore().setData();
   dailyData.value = await useDataStore().$state.dataOutput;
   selectedData.value = dailyData.value.find((data) => data.date === today);
+  udts.selectedDate = today;
   selectedDate.value = udts.selectedDate;
 
   firstDate.value = dailyData.value[0].date;
   lastDate.value = dailyData.value[dailyData.value.length - 1].date;
 
-  udts.selectedDate = today;
   udts.firstDate = dailyData.value[0].date;
   udts.lastDate = dailyData.value[dailyData.value.length - 1].date;
 
   console.log(udts.firstD);
-
-  // await useDataTypeStore().firstDate = dailyData.value[0].date;
-  // await useDataTypeStore().lastDate = dailyData.value[dailyData.value.length - 1].date;
 
   goToSlide(getIndexFromDate(today));
   // window.addEventListener('resize', () => {getCenter();});
@@ -81,11 +75,7 @@ onMounted(async () => {
 
 watch(useTextStore(), async () => {
   textData.value = await useTextStore().$state.wpText[0].content.rendered;
-  const divElements = Array.from(
-    new DOMParser().parseFromString(textData.value, "text/html").querySelectorAll("div")
-  );
-  const innerTextList = divElements.map((div) => div.innerText);
-  textList.value = innerTextList;
+  
 });
 
 watch(useDataTypeStore(), async () => {
@@ -200,6 +190,11 @@ function convertDate(date) {
   return `${year} ${months[parseInt(date.split("-")[1]) - 1]} ${day}`;
 }
 
+function indexToMonth(index) {
+  console.log(index)
+  return ["Nan","Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ][index];
+}
+
 // function removeDashesFromDate(date) {
 //     // all dashes
 //     return date.split('-').join(' ');
@@ -306,14 +301,14 @@ const accuracyType = ref("PieChart");
       @swiper="getRef"
       class="mySwiper"
     >
-    {{ console.log(dailyData) }}
+    {{ console.log(selectedDate) }}
       <template v-for="(data, index) in dailyData" :key="data.date">
         <!-- if not active then notActiveSlide class -->
         <swiper-slide
           class="mySlide d-flex align-items-end justify-content-center"
           :class="{
-            activeSlide: index === selectedSlide,
-            notActiveSlide: index !== selectedSlide,
+            activeSlide: index == selectedSlide,
+            notActiveSlide: index != selectedSlide,
           }"
           :id="data.date"
         >
@@ -325,8 +320,9 @@ const accuracyType = ref("PieChart");
             }"
           >
           <!-- <span class="text-muted">{{ data.energyKWh }}</span> -->
-          <span class="mySliderDate text-center">
-              {{ replaceDashesWithDot(removeYear(data.date)) }}
+          <span class="mySliderDate text-center" style="font-size: .8rem">
+              <b>{{ data.date.slice(-2)}}</b><br>
+              {{ indexToMonth(data.date.slice(5,7).replace(/^0+/, "")) }}
             </span>
 
             <p class="mySliderDate text-center">
@@ -337,12 +333,12 @@ const accuracyType = ref("PieChart");
     </swiper>
 
     <div class="d-flex w-100 justify-content-center">
-      <button @click="prevWeek()" class="append-buttons btn" style="font-size: 1.5rem"><<</button>
-      <button @click="prev()" class="append-buttons btn" style="font-size: 1.5rem"><</button>
+      <button @click="prevWeek()" class="append-buttons btn" style="font-size: 1.5rem; z-index: 10;"><<</button>
+      <button @click="prev()" class="append-buttons btn" style="font-size: 1.5rem; z-index: 10;"><</button>
       
-      <button @click="next()" class="append-buttons btn" style="font-size: 1.5rem"
+      <button @click="next()" class="append-buttons btn" style="font-size: 1.5rem; z-index: 10;"
         >></button>
-        <button @click="nextWeek()" class="append-buttons btn" style="font-size: 1.5rem">
+        <button @click="nextWeek()" class="append-buttons btn" style="font-size: 1.5rem; z-index: 10;">
           >>
           </button>
   </div>
@@ -360,12 +356,11 @@ const accuracyType = ref("PieChart");
             class="rounded col-md-3 p-3 infoBox d-flex justify-content-center align-content-center"
           >
             <div class="d-flex flex-column justify-content-center align-content-center">
-              <p class="w-100 text-center" style="font-size: 2rem; margin-bottom: 0.5rem">
+              <p class="w-100 text-center" style="font-size: 1.5rem;">
                 ⚡
               </p>
-              <p class="card-text text-center mt-4" style="margin-bottom: -1rem">
-                Energy Production: {{ selectedData.energyKWh }}KWH
-              </p>
+                <p class="w-100 text-center" style="font-size: 1.4rem;">{{ selectedData.energyKWh }}KWH</p>
+                Energy Production
             </div>
           </div>
 
@@ -379,9 +374,8 @@ const accuracyType = ref("PieChart");
                 :src="weatherCodeToIcon(selectedData.weather)"
                 alt=""
               />
-              <p class="card-text weatherText text-center mt-3">
-                temperature: {{ selectedData.temperature }}°C
-              </p>
+                <p class="w-100 text-center" style="font-size: 1.4rem;">{{ selectedData.temperature }}°C</p>
+                Temperature
             </div>
           </div>
 
@@ -396,7 +390,7 @@ const accuracyType = ref("PieChart");
               :data="accuracyData"
               :options="accuracyOptions"
             ></GChart>
-            <p class="text-center">Accuracy</p>
+            <p class="text-center mt-1">Accuracy</p>
           </div>
 
           <div class="row mx-auto">
@@ -427,7 +421,6 @@ const accuracyType = ref("PieChart");
   </div>
 
   <!-- {{ selectedData }} -->
-  <!-- {{ textList }} -->
 </template>
 
 <style lang="scss">
@@ -555,8 +548,8 @@ $text-color: #f8f7f6;
 }
 
 .weatherImage {
-  width: 5rem;
-  height: 5rem;
+  width: 3.5rem;
+  height: 3.5rem;
   // background-color: $main-color;
 }
 

@@ -113,12 +113,13 @@ $main-color: #616968;
 $secondary-color: #004140;
 $third-color: #343434;
 $text-color: #f8f7f6;
+$nav-color: #354A48;
 
 .lang-select {
   display: flex;
   justify-content: center;
   align-content: center;
-  background-color: $secondary-color;
+  background-color: $nav-color;
   color: $text-color;
   color-scheme: dark;
   border: none;
@@ -133,17 +134,26 @@ $text-color: #f8f7f6;
 
 .lang-select:focus,
 .lang-select:active {
-  background-color: $secondary-color;
+  background-color: $nav-color;
   color: $text-color;
   color-scheme: dark;
   border: none;
   outline: none;
 }
 
-@media screen and (min-width: 1350px) {
+@media screen and (min-width: 1400px) {
   .lang-select {
     margin-left: 150px;
+    background-color: $main-color;
+    color: $text-color;
   }
+
+  .lang-select:focus,
+.lang-select:active {
+  background-color: $main-color;
+  color: $text-color;
+}
+
   
 }
 

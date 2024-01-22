@@ -7,6 +7,12 @@ export const useTextStore = defineStore('text', {
     actions: {
         setText(input) {
             this.wpText = input
+        },
+
+        getMainText() {
+            
         }
+
+
     }
 })

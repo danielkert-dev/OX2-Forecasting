@@ -17,12 +17,14 @@ function goToView(dataType) {
     router.push({ name: "main" });
   } else if (dataType === "monthly") {
     router.push({ name: "monthly" });
+    selectedDate.value = 0
   } else if (dataType === "yearly") {
     router.push({ name: "yearly" });
   } else {
     console.error("Invalid data type");
   }
 }
+
 
 /* //@watch
  */
@@ -45,7 +47,7 @@ watch(selectedDate, () => {
 watch(
   () => router.currentRoute.value,
   () => {
-    console.log(router.currentRoute.value.name);
+    // console.log(router.currentRoute.value.name);
     if (router.currentRoute.value.name === "main") {
       dataType.value = "daily";
     } else {
@@ -70,13 +72,13 @@ watch(
     </div>
 
     <div
-      class="middleWrap ms-1 d-flex flex-wrap justify-content-center align-content-center"
+      class="middleWrap"
       v-if="router.currentRoute.value.name !== 'about'"
     >
       <select
         v-model="dataType"
-        class="custom-select dark-mode form-select dataTypeSelect m-1"
-        style="width: 8rem; height: fit-content"
+        class="custom-select dark-mode form-select dataTypeSelect me-1"
+        style="width: 10rem; height: fit-content;"
         @change="goToView(dataType)"
       >
         <option value="daily" :selected="dataType === 'daily'">Daily</option>
@@ -85,14 +87,13 @@ watch(
       </select>
 
       <div v-if="dataType === 'daily'">
-        <!-- Diable date selectedData before first date after last date -->
         <input
           type="date"
           v-model="selectedDate"
           :min="firstDate"
           :max="lastDate"
-          class="m-1 dark-mode form-control dateSelectDaily d-flex flex-wrap justify-content-center align-content-center"
-          style="width: 10rem; height: fit-content"
+          class=" dark-mode form-control dateSelectDaily my-auto ms-1"
+          style="width: 10rem"
         />
       </div>
 
@@ -102,11 +103,22 @@ watch(
           v-if="router.currentRoute.value.name !== 'about'"
         >
           <select
-            style="width: 8rem; height: fit-content"
-            class="custom-select dark-mode form-control dateSelectMonthly mt-1"
+            v-model="selectedDate"
+            style="width: 10rem; height: fit-content"
+            class="custom-select dark-mode form-control dateSelectMonthly ms-1 my-auto"
           >
-            <option>Januari</option>
-            <option>Februari</option>
+            <option value="0">Februari</option>
+            <option value="1">Mars</option>
+            <option value="2">April</option>
+            <option value="3">Maj</option>
+            <option value="4">Juni</option>
+            <option value="5">Juli</option>
+            <option value="6">Augusti</option>
+            <option value="7">September</option>
+            <option value="8">Oktober</option>
+            <option value="9">November</option>
+            <option value="10">December</option>
+            <option value="11">Januari</option>
           </select>
         </div>
       </div>
@@ -125,47 +137,48 @@ $main-color: #616968;
 $secondary-color: #004140;
 $third-color: #343434;
 $text-color: #f8f7f6;
+$nav-color: #354A48;
 
 nav {
   width: 100vw;
   color: $text-color !important;
 }
 
-@media screen and (min-width: 1350px) {
-  nav::before {
-  content: "";
-  position: absolute;
-  top: 40%;
-  margin-top: -.3rem;
-  left: 41%;
-  right: 0;
-  bottom: 0;
-  background-image: url("../../assets/images/wave4.svg");
-  z-index: -1;
-  opacity: 1;
-  background-repeat: no-repeat;
-  background-size: 100% 150%;
-  background-position: center;
+@media screen and (min-width: 1400px) {
 
-  transform: scale(6);
-  background-position: top;
-  filter:brightness(.8);
-
-}
 }
 
 .middleWrap {
-  width: 30rem;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-@media screen and (max-width: 1350px) {
+@media screen and (max-width: 1800px) {
   nav {
-    background-color: $secondary-color !important;
+    background-color: $third-color !important;
   }
 
   .middleWrap {
     width: fit-content;
   }
+
+}
+
+@media screen and (min-width: 1350px){
+  .dataTypeSelect {
+  margin-left: 1.3rem
+}
+
+  .iconWrap {
+      padding-left: 1rem;
+    }
+
+  .middleWrap {
+    
+  }
+  
 }
 
 .navSpacer {
@@ -174,6 +187,12 @@ nav {
 
 .iconWrap {
   height: 4rem;
+}
+
+
+
+.dateSelectDaily {
+
 }
 
 
@@ -189,33 +208,43 @@ nav {
   height: 5rem;
 }
 
+.dataTypeSelect {
+margin-left: .4rem
+}
   
 }
 
 
 input,
 select {
-  background-color: $secondary-color;
+  background-color: $nav-color;
   color: $text-color;
   color-scheme: dark;
   border: none;
   filter:brightness(1.2);
+  outline: none;
+  box-shadow: none;
+
 }
 
 select:focus,
 select:active,
 input:focus,
 input:active {
-  background-color: $secondary-color;
+  background-color: $nav-color;
   color: $text-color;
   border: none;
   outline: none;
+  // shadow none
+
+  box-shadow: none;
 }
 
 
 .custom-select {
-  background: $secondary-color
+  background: $nav-color
     url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='white' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e")
     no-repeat right 0.75rem center/8px 10px !important;
+    outline: none;
 }
 </style>

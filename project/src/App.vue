@@ -2,6 +2,7 @@
 import { RouterView, RouterLink } from "vue-router";
 import { Transition } from "vue";
 import NavComp from "./components/global/NavComp.vue";
+import LoadingComp from "./components/global/LoadingComp.vue";
 import { useDataTypeStore } from "./stores/DataTypeStore";
 
 const udts = useDataTypeStore();
@@ -12,22 +13,24 @@ function resetDataType() {
 </script>
 
 <template>
+  <LoadingComp/>
   <NavComp />
   <RouterView />
 
-  <div class="container">
-    <footer class="text-center">
+    <footer class="text-center footer pt-3">
       <RouterLink
         to="/"
-        class="m-2 text-decoration-none text-muted"
+        class="m-2 text-decoration-none text-light"
         @click="resetDataType()"
         >Home</RouterLink
       >
-      <RouterLink to="/about" class="m-2 text-decoration-none text-muted"
+      <RouterLink to="/about" class="m-2 text-decoration-none text-light"
         >About</RouterLink
       >
     </footer>
-  </div>
+
+  <span></span>
+
 </template>
 
 <style lang="scss">
@@ -51,10 +54,50 @@ body {
 
 
 footer {
-  height: 5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: fixed;
+    height: 60px;
+    bottom: 0;
+    width: 100%;
+}
+
+@media screen and (min-width: 1800px) {
+
+  footer::before {
+  content: "";
+  position:fixed;
+  top: 0%;
+  left: 0%;
+  right: 0;
+  bottom: 0;
+  background-image: url("./assets/images/full.svg");
+  z-index: -1000;
+  opacity: 1;
+  -khtml-user-select: none;
+    -o-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.01);
+}
+
+}
+
+@media screen and (max-width: 1800px) {
+  footer {
+    background-color: $third-color !important;
+  }
+
+  footer::before {
+    content: "";
+    background-image: "";
+    top: 0%;
+    left: 0%;
+    opacity: 1;
+  }
+
 }
 
 /* Style the scrollbar */
@@ -70,7 +113,7 @@ footer {
 }
 
 
-@media screen and (max-width: 360px) {
+@media screen and (max-width: 385px) {
   html {
     display: none;
   }

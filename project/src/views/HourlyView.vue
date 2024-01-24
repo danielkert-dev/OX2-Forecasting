@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref, watch, computed, nextTick } from "vue";
 
+import { weatherCodes } from "../components/WeatherCodesComp.js";
 import { desciptionFromEnergy } from "../components/DescriptionComp";
 
 
@@ -18,85 +19,84 @@ import "swiper/css/scrollbar";
 
 const modules = [Pagination, Scrollbar];
 
-useTextStore().setText();
 
-// data type to determine what page it is on
-const udts = useDataTypeStore()
-// // const dataType = 'daily';
+/* //@ Init
+ */
+
+ const udts = useDataTypeStore();
+// const dataType = 'daily';
 const dataType = udts.dataType;
-const monthlyData = ref([]);
-const selectedData = ref('')
-const selectedDate = ref('')
-const firstDate = ref('')// const lastDate = ref('')
-const lastDate = ref('')
+const hourlyData = ref("");
+const selectedData = ref("");
+const selectedHour = ref("");
+const firstHour = ref("");
+const lastHour = ref("");
 
-// const textData = ref('')
-// const textList = ref([]);
+const textData = ref("");
 
-const selectedSlide = ref('0');
+const selectedSlide = ref("");
+
 const swiperRef = ref(null);
 
-onMounted(async () => {
-  const thisMonth = new Date().getMonth()
-  await useDataStore().setData();
-  monthlyData.value = await useDataStore().$state.dataMonthlyOutput[0];
+/* //@ On mounted
+ */
+ onMounted(async () => {
+    const hour = new Date().getHours() - new Date().getHours();
+    await useDataStore().setData();
+    hourlyData.value = await useDataStore().$state.dataHourlyOutput;
 
-  selectedData.value = monthlyData.value[thisMonth]
-  udts.selectedDate = thisMonth
-  selectedDate.value = thisMonth
+    selectedData.value = hourlyData.value[0];
+    udts.selectedDate = new Date(hourlyData.value[0].date).getHours() - new Date().getHours();
+    selectedHour.value = new Date(hourlyData.value[0].date).getHours() - new Date().getHours();
 
-  goToSlide(thisMonth);
+    goToSlide(hour);
 
-
-  // console.log(selectedDate.value)
-  // firstDate.value = monthlyData.value[0].date
-  // lastDate.value = monthlyData.value[0].date
-
-
-  // console.log(firstDate.value)
-  // console.log(lastDate.value)
-
-  accuracyData.value = [
+    accuracyData.value = [
     ["Name", "Accuracy"],
     ["Accuracy", { v: selectedData.value.accuracy, f: "90%" }],
     ["Rest", { v: 100 - 100 * (selectedData.value.accuracy / 100), f: "10%" }],
   ];
 
+  
   nextTick(() => {
     if (swiperRef.value && swiperRef.value.swiper) {
       swiperRef.value.swiper.update();
     }
   });
 
+ })
+
+
+watch(selectedHour, () => {
+
+    udts.selectedDate = selectedHour.value;
+
+    selectedData.value = hourlyData.value[udts.selectedDate]
+    goToSlide(selectedHour.value);
+    // console.log("udts: " + udts.selectedDate);
+    // console.log("selectedHour: " + selectedHour.value)
+    // console.log("selectedSlide: " + selectedSlide.value)
+
+
 });
 
-watch(selectedDate, () => {
-  udts.selectedDate = selectedDate.value;
+watch(useDataTypeStore(), async () => {
+    selectedHour.value = udts.selectedDate
+    selectedData.value = hourlyData.value[udts.selectedDate]
+    // console.log("watch: " + selectedData.value)
 
-    selectedData.value = monthlyData.value[Number(selectedDate.value)];
-    goToSlide(selectedDate.value);
-
-});
-
-watch(useDataTypeStore() , async () => {
-  selectedDate.value = udts.selectedDate
-  selectedData.value = monthlyData.value[Number(selectedDate.value)]
-
-  
-  accuracyData.value = [
+    accuracyData.value = [
     ["Name", "Accuracy"],
     ["Accuracy", { v: selectedData.value.accuracy, f: "90%" }],
     ["Rest", { v: 100 - 100 * (selectedData.value.accuracy / 100), f: "10%" }],
   ];
 
-  
   chartData.value = [
     ["Type", "KWH", { role: "tooltip" }], // Add a new column for colors
-    ["Elnät", selectedData.value.energyKWh / 2, `${selectedData.value.energyKWh / 2} KWH`], // Use color1 for the first slice
-    ["Vätegas", selectedData.value.energyKWh / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color2 for the second slice
-    ["Batteri", selectedData.value.energyKWh / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color3 for the third slice
+    ["Elnät", selectedData.value.energyKWh.split('.')[0] / 2, `${selectedData.value.energyKWh / 2} KWH`], // Use color1 for the first slice
+    ["Vätegas", selectedData.value.energyKWh.split('.')[0] / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color2 for the second slice
+    ["Batteri", selectedData.value.energyKWh.split('.')[0] / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color3 for the third slice
   ];
-
 
   if (selectedData.value.energyKWh == 0.0) {
     chartData.value = [
@@ -104,14 +104,41 @@ watch(useDataTypeStore() , async () => {
       ["No energy", 0.00001], // Use color1 for the first slice
     ];
   }
-})
+});
+
+/* //@ Functions
+*/
+
+function weatherCodeToIcon(code) {
+  if (!code) {
+    return ""; // or handle the case where date is undefined/null
+  }
+  const weatherCode = weatherCodes[0][code];
+  return weatherCode.day.image;
+}
+
+function weatherToColor(code) {
+  if (!code) {
+    return ""; // or handle the case where date is undefined/null
+  }
+  const weatherCode = weatherCodes[0][code];
+  return weatherCode.day.color;
+
+}
 
 
-// Functions
+function getIndexFromDate(date) {
+  return hourlyData.value.findIndex((data) => data.date === date);
+}
+
 const goToSlide = (index) => {
-  console.log(index)
   swiperRef.value.slideTo(index);
 };
+
+function getRef(swiperInstance) {
+  swiperRef.value = swiperInstance;
+}
+
 
 function next() {
   swiperRef.value.slideNext(); // should work
@@ -122,29 +149,19 @@ function prev() {
 }
 
 function nextWeek() {
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < 23; i++) {
     swiperRef.value.slideNext(); // should work
   }
 }
 
 function prevWeek() {
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < 23; i++) {
     swiperRef.value.slidePrev(); // should work
   }
 }
 
-function getRef(swiperInstance) {
-  swiperRef.value = swiperInstance;
-}
 
-function indexToMonth(index) {
-  console.log(index)
-  return ["Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan" ][index];
-}
-
-
-/* Chart */
-
+/* chart*/
 const chartData = ref([
   ["Type", "KWH"], // Add a new column for colors
   ["Elnät", 100], // Use color1 for the first slice
@@ -155,13 +172,15 @@ const chartData = ref([
 const chartOptions = ref({
   //    title: "KWH",
   titleTextStyle: { alignment: "center" },
-  legend: { position: "labeled" },
+  legend: { position: "labeled", alignment: "center" },
   chartArea: {width: '100%', height: '75%'},
+
+  //   chartArea: {left: 0},
+
   backgroundColor: { fill: "transparent" },
   fontName: "Poppins",
   fontSize: 15,
   height: 180,
-  // add kwh to value 
   pieSliceText: "value",
   pieStartAngle: 100,
   // Energy color, Hydrogen color, Battery color
@@ -172,9 +191,10 @@ const chartType = ref("PieChart");
 
 const accuracyData = ref([
   ["Name", "Accuracy"],
-  ["Accuracy", { v: selectedData.accuracy, f: "90%" }],
+  ["Accuracy", { v: 0, f: "90%" }],
   ["Rest", { v: 0.1, f: "10%" }],
 ]);
+
 const accuracyOptions = ref({
   pieHole: 0.85,
   chartArea: { width: "80%", height: "80%" },
@@ -195,14 +215,12 @@ const accuracyOptions = ref({
 
 const accuracyType = ref("PieChart");
 
-
 </script>
 
 <template>
-  <div class="container mt-5">
-  <!-- {{ monthlyData }} -->
+<div class="container mt-5">
 
-  <swiper
+<swiper
       ref="{swiperRef}"
       :slidesPerView="20"
       :spaceBetween="0"
@@ -212,42 +230,39 @@ const accuracyType = ref("PieChart");
       :modules="modules"
       @slideChange="
         selectedSlide = $event.activeIndex;
-        selectedDate = monthlyData[$event.activeIndex].num;
+        selectedHour = new Date(hourlyData[$event.activeIndex].date).getHours()- new Date().getHours();
       "
       @swiper="getRef"
       class="mySwiper"
     >
-
-    <template v-for="(data, index) in monthlyData" :key="data.date">
+      <template v-for="(data, index) in hourlyData" :key="new Date(data.date).getHours()">
         <!-- if not active then notActiveSlide class -->
+
         <swiper-slide
           class="mySlide d-flex align-items-end justify-content-center"
           :class="{
             activeSlide: index == selectedSlide,
             notActiveSlide: index != selectedSlide,
           }"
-          :id="data"
+          :id="data.date"
         >
-
                   <div
             class="mySlideData d-flex align-items-end justify-content-center rounded"
             :style="{
-              backgroundColor: `rgba(50, ${data.energyKWh * .2}, 50, .8)`,
-              height: `${data.energyKWh * .06}px`,
+                backgroundColor: `${weatherToColor(data.weather)}`,
+              height: `${data.energyKWh * 3}px`,
             }"
           >
           <!-- <span class="text-muted">{{ data.energyKWh }}</span> -->
           <span class="mySliderDate text-center" style="font-size: .8rem">
-            <b>{{ indexToMonth(data.num) }}</b><br>
-            {{ new Date(data.date).getFullYear() }}
-            </span>
+              <b>{{ new Date(data.date).getHours() + ":00" }}</b><br>
+                          </span>
 
             <p class="mySliderDate text-center">
             </p>
           </div>
         </swiper-slide>
       </template>
-    
     </swiper>
 
     <div class="d-flex w-100 justify-content-center my-2">
@@ -260,15 +275,9 @@ const accuracyType = ref("PieChart");
           >>
           </button>
   </div>
+<!-- {{ selectedData }} -->
 
-    {{ console.log(selectedSlide) }}
-
-
-
-  <!-- {{ selectedData }}
-  {{ selectedDate }} -->
-
-  <div class="">
+<div class="">
       <div class="mainBox mt-1">
         <div class="row w-100 d-flex justify-content-between mx-auto g-4">
 
@@ -289,11 +298,13 @@ const accuracyType = ref("PieChart");
             class="rounded col-md-3 p-3 infoBox d-flex justify-content-center align-content-center"
           >
             <div class="d-flex flex-column justify-content-center align-content-center">
-              <p class="w-100 text-center" style="font-size: 1.5rem;">
-              ☀️
-              </p>
-                <p class="w-100 text-center" style="font-size: 1.4rem;">{{ selectedData.dailysunhours }}h</p>
-                Daily Sun Hours
+              <img
+                class="weatherImage rounded mx-auto"
+                :src="weatherCodeToIcon(selectedData.weather)"
+                alt=""
+              />
+                <p class="w-100 text-center" style="font-size: 1.4rem;">{{ selectedData.temperature }}°C</p>
+                Temperature
             </div>
           </div>
 
@@ -309,8 +320,6 @@ const accuracyType = ref("PieChart");
               :options="accuracyOptions"
             ></GChart>
             <p class="text-center mt-1">Accuracy</p>
-          </div>
-
           </div>
 
           <div class="row mx-auto">
@@ -339,6 +348,8 @@ const accuracyType = ref("PieChart");
         </div>
       </div>
     </div>
+
+</div>
 </template>
 
 <style lang="scss">
@@ -347,6 +358,10 @@ $secondary-color: #004140;
 $third-color: #343434;
 $text-color: #f8f7f6;
 
+.dateTop {
+  height: 0;
+  z-index: 100;
+}
 
 .mySwiper {
   height: 18rem;
@@ -446,9 +461,7 @@ $text-color: #f8f7f6;
   opacity: 0.4;
 }
 
-
 /* Data */
-
 .accuracyNumber {
   font-size: 1.4rem;
   color: green;
@@ -473,4 +486,10 @@ $text-color: #f8f7f6;
   background-color: $text-color;
   min-height: 10rem;
 }
+
+.shareChart {
+  margin-top: 2rem;
+}
+
+
 </style>

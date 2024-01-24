@@ -15,16 +15,21 @@ function resetDataType() {
 <template>
   <LoadingComp/>
   <NavComp />
-  <RouterView />
+
+  <router-view v-slot="{ Component }">
+  <transition name="fade" mode="">
+    <component :is="Component" />
+  </transition>
+</router-view>
 
     <footer class="text-center footer pt-3">
       <RouterLink
         to="/"
-        class="m-2 text-decoration-none text-light"
+        class="m-2 text-decoration-none text-light footer-text"
         @click="resetDataType()"
         >Home</RouterLink
       >
-      <RouterLink to="/about" class="m-2 text-decoration-none text-light"
+      <RouterLink to="/about" class="m-2 text-decoration-none text-light footer-text"
         >About</RouterLink
       >
     </footer>
@@ -58,45 +63,29 @@ footer {
     height: 60px;
     bottom: 0;
     width: 100%;
+    background-color: none;
 }
+.footer-text {
+  color: $third-color !important;
+ }
 
-@media screen and (min-width: 1800px) {
+@media screen and (max-width: 767px) {
 
-  footer::before {
-  content: "";
-  position:fixed;
-  top: 0%;
-  left: 0%;
-  right: 0;
-  bottom: 0;
-  background-image: url("./assets/images/full.svg");
-  z-index: -1000;
-  opacity: 1;
-  -khtml-user-select: none;
-    -o-user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    user-select: none;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  transform: scale(1.01);
-}
-
-}
-
-@media screen and (max-width: 1800px) {
   footer {
-    background-color: $third-color !important;
-  }
+  background-color: $third-color;
+}
 
-  footer::before {
-    content: "";
-    background-image: "";
-    top: 0%;
-    left: 0%;
-    opacity: 1;
-  }
+ .footer-text {
+  color: $text-color !important;
+ }
+
+}
+
+@media screen and (min-width: 768px) {
+  footer {
+  background-color: white;
+}
+
 
 }
 
@@ -117,5 +106,18 @@ footer {
   html {
     display: none;
   }
+}
+
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.1s ease;
+  transform: translateY(10px);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  
 }
 </style>

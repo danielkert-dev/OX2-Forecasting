@@ -2,6 +2,7 @@
 import { onMounted, ref, watch, computed, nextTick } from "vue";
 
 import { weatherCodes } from "../components/WeatherCodesComp.js";
+import { desciptionFromEnergy } from "../components/DescriptionComp";
 
 import { useTextStore } from "../stores/TextStore.js";
 import { useDataStore } from "../stores/DataStore.js";
@@ -94,10 +95,10 @@ watch(useDataTypeStore(), async () => {
   ];
 
   chartData.value = [
-    ["Type", "KWH"], // Add a new column for colors
-    ["Elnät", selectedData.value.energyKWh / 2], // Use color1 for the first slice
-    ["Vätegas", selectedData.value.energyKWh / 5], // Use color2 for the second slice
-    ["Batteri", selectedData.value.energyKWh / 5], // Use color3 for the third slice
+    ["Type", "KWH", { role: "tooltip" }], // Add a new column for colors
+    ["Elnät", selectedData.value.energyKWh.split('.')[0] / 2, `${selectedData.value.energyKWh / 2} KWH`], // Use color1 for the first slice
+    ["Vätegas", selectedData.value.energyKWh.split('.')[0] / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color2 for the second slice
+    ["Batteri", selectedData.value.energyKWh.split('.')[0] / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color3 for the third slice
   ];
 
   if (selectedData.value.energyKWh == 0.0) {
@@ -234,15 +235,13 @@ const chartData = ref([
 const chartOptions = ref({
   //    title: "KWH",
   titleTextStyle: { alignment: "center" },
-  legend: { position: "left", alignment: "center" },
+  legend: { position: "labeled" },
   chartArea: {width: '100%', height: '75%'},
-
-  //   chartArea: {left: 0},
-
   backgroundColor: { fill: "transparent" },
   fontName: "Poppins",
   fontSize: 15,
-  height: 200,
+  height: 180,
+  // add kwh to value 
   pieSliceText: "value",
   pieStartAngle: 100,
   // Energy color, Hydrogen color, Battery color
@@ -278,7 +277,7 @@ const accuracyType = ref("PieChart");
 </script>
 
 <template>
-  <div class="container">
+  <div class="container mt-5">
     <!-- <p class="w-100 dateTop text-muted">
       {{ convertDate(selectedData.date) }} <br />
       {{ selectedData.age }}
@@ -332,7 +331,7 @@ const accuracyType = ref("PieChart");
       </template>
     </swiper>
 
-    <div class="d-flex w-100 justify-content-center">
+    <div class="d-flex w-100 justify-content-center my-2">
       <button @click="prevWeek()" class="append-buttons btn" style="font-size: 1.5rem; z-index: 10;"><<</button>
       <button @click="prev()" class="append-buttons btn" style="font-size: 1.5rem; z-index: 10;"><</button>
       
@@ -405,14 +404,15 @@ const accuracyType = ref("PieChart");
               ></GChart>
             </div>
 
-            <div class="col-md-6 p-5">
-                <h1>Description</h1>
+            <div class="col-md-6 p-5 d-flex flex-column justify-content-center align-items-center">
               <br />
               <!-- From wordpress add text with integrated data -->
-              <p>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Rem officia
-                eligendi, nulla facere eveniet provident.
+              <p class="" style="font-size: 1.5rem"> 
+                {{ desciptionFromEnergy(selectedData.energyKWh) }}
               </p>
+              <div class="">
+                Image
+              </div>
             </div>
           </div>
         </div>

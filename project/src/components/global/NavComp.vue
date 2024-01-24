@@ -5,6 +5,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 import { useDataTypeStore } from "../../stores/DataTypeStore";
 import WpAPIComp from "../../components/global/WpAPIComp.vue";
+import { useDataStore } from "../../stores/DataStore";
 
 const udts = useDataTypeStore();
 const dataType = ref(udts.dataType);
@@ -15,6 +16,8 @@ const selectedDate = ref(udts.selectedDate);
 function goToView(dataType) {
   if (dataType === "daily") {
     router.push({ name: "main" });
+  } else if ( dataType === "hourly") {
+    router.push({ name: "hourly" });
   } else if (dataType === "monthly") {
     router.push({ name: "monthly" });
     selectedDate.value = 0
@@ -58,6 +61,7 @@ watch(
 </script>
 
 <template>
+  <span class="nav-img"></span>
   <nav class="d-flex navbar fixed-top ">
     <div class="ms-2 iconWrap">
       <h4 class="">
@@ -81,9 +85,10 @@ watch(
         style="width: 10rem; height: fit-content;"
         @change="goToView(dataType)"
       >
+        <option value="hourly" :selected="dataType === 'hourly'">Hourly</option>
         <option value="daily" :selected="dataType === 'daily'">Daily</option>
         <option value="monthly" :selected="dataType === 'monthly'">Monthly</option>
-        <option value="yearly" :selected="dataType === 'yearly'">Yearly</option>
+        <!-- <option value="yearly" :selected="dataType === 'yearly'" disabled>Yearly</option> -->
       </select>
 
       <div v-if="dataType === 'daily'">
@@ -95,6 +100,16 @@ watch(
           class=" dark-mode form-control dateSelectDaily my-auto ms-1"
           style="width: 10rem"
         />
+      </div>
+
+      <div v-if="dataType === 'hourly'">
+        <select
+        v-model="selectedDate"
+            style="width: 10rem; height: fit-content"
+            class="custom-select dark-mode form-control dateSelectMonthly ms-1 my-auto"
+          >
+      <option v-for="data in useDataStore().$state.dataHourlyOutput" :key="new Date(data.date).getHours()- new Date().getHours()" :value="new Date(data.date).getHours()- new Date().getHours()" :selected="new Date(data.date).getHours()- new Date().getHours() === selectedDate" >{{ new Date(data.date).getHours() + ":00" }}</option>
+        </select>
       </div>
 
       <div v-if="dataType === 'monthly'">
@@ -144,6 +159,7 @@ nav {
   color: $text-color !important;
 }
 
+
 @media screen and (min-width: 1400px) {
 
 }
@@ -155,10 +171,28 @@ nav {
   align-items: center;
 }
 
-@media screen and (max-width: 1800px) {
+@media screen and (max-width: 2000px) {
   nav {
-    background-color: $third-color !important;
+    // background-color: $third-color !important;
   }
+
+  .nav-img {
+  content: "";
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-image: url("../../assets/images/animated5.svg");
+  top: -37%;
+  left: 0%;
+  opacity: 1;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  z-index: 2;
+  user-select: none;
+  pointer-events: none;
+  // filter:drop-shadow(0 0 1rem $main-color);
+}
 
   .middleWrap {
     width: fit-content;
@@ -199,6 +233,9 @@ nav {
 
 @media screen and (max-width: 600px) {
   
+  .nav-img {
+  top: -32%;
+}
   .iconWrap {
     width: 100%;
     text-align: center;
@@ -217,7 +254,7 @@ margin-left: .4rem
 
 input,
 select {
-  background-color: $nav-color;
+  background-color: $third-color;
   color: $text-color;
   color-scheme: dark;
   border: none;
@@ -231,7 +268,7 @@ select:focus,
 select:active,
 input:focus,
 input:active {
-  background-color: $nav-color;
+  background-color: $third-color;
   color: $text-color;
   border: none;
   outline: none;
@@ -242,7 +279,7 @@ input:active {
 
 
 .custom-select {
-  background: $nav-color
+  background: $third-color
     url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='white' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e")
     no-repeat right 0.75rem center/8px 10px !important;
     outline: none;

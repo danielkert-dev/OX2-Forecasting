@@ -10,7 +10,18 @@ export const useTextStore = defineStore('text', {
         },
 
         getMainText() {
-            
+            // Process main view text
+            return 
+        },
+
+        getMonthlyText() {
+            // Process monthly view text
+            return
+        },
+
+        getYearlyText() {
+            // Process yearly view text
+            return
         }
 
 

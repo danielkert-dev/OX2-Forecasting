@@ -119,7 +119,7 @@ $nav-color: #354A48;
   display: flex;
   justify-content: center;
   align-content: center;
-  background-color: $nav-color;
+  background-color: $third-color;
   color: $text-color;
   color-scheme: dark;
   border: none;
@@ -134,7 +134,7 @@ $nav-color: #354A48;
 
 .lang-select:focus,
 .lang-select:active {
-  background-color: $nav-color;
+  background-color: $third-color;
   color: $text-color;
   color-scheme: dark;
   border: none;
@@ -144,13 +144,13 @@ $nav-color: #354A48;
 @media screen and (min-width: 1400px) {
   .lang-select {
     margin-left: 150px;
-    background-color: $main-color;
+    background-color: $third-color;
     color: $text-color;
   }
 
   .lang-select:focus,
 .lang-select:active {
-  background-color: $main-color;
+  background-color: $third-color;
   color: $text-color;
 }
 

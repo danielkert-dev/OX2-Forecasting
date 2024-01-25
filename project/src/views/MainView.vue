@@ -3,6 +3,8 @@ import { onMounted, ref, watch, computed, nextTick } from "vue";
 
 import { weatherCodes } from "../components/WeatherCodesComp.js";
 import { desciptionFromEnergy } from "../components/DescriptionComp";
+import { textdata } from "../components/TextDataComp";
+import { useLanguageStore } from "../stores/LanguageStore";
 
 import { useTextStore } from "../stores/TextStore.js";
 import { useDataStore } from "../stores/DataStore.js";
@@ -52,7 +54,6 @@ onMounted(async () => {
   udts.firstDate = dailyData.value[0].date;
   udts.lastDate = dailyData.value[dailyData.value.length - 1].date;
 
-  console.log(udts.firstD);
 
   goToSlide(getIndexFromDate(today));
   // window.addEventListener('resize', () => {getCenter();});
@@ -60,7 +61,7 @@ onMounted(async () => {
 
   accuracyData.value = [
     ["Name", "Accuracy"],
-    ["Accuracy", { v: selectedData.value.accuracy, f: "90%" }],
+    [`${ useLanguageStore().text.accuracy }`, { v: selectedData.value.accuracy, f: "90%" }],
     ["Rest", { v: 100 - 100 * (selectedData.value.accuracy / 100), f: "10%" }],
   ];
 
@@ -74,10 +75,31 @@ onMounted(async () => {
 /* //@ Watch
  */
 
-watch(useTextStore(), async () => {
-  textData.value = await useTextStore().$state.wpText[0].content.rendered;
-  
+watch(useLanguageStore(), async () => {
+  accuracyData.value = [
+    ["Name", "Accuracy"],
+    [`${ useLanguageStore().text.accuracy }`, { v: selectedData.value.accuracy, f: "90%" }],
+    ["Rest", { v: 100 - 100 * (selectedData.value.accuracy / 100), f: "10%" }],
+  ];
+  chartData.value = [
+    ["Type", "KWH", { role: "tooltip" }], // Add a new column for colors
+    [`${ useLanguageStore().text.electricalGrid }`, selectedData.value.energyKWh.split('.')[0] / 2, `${selectedData.value.energyKWh / 2} KWH`], // Use color1 for the first slice
+    [`${ useLanguageStore().text.hydrogen }`, selectedData.value.energyKWh.split('.')[0] / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color2 for the second slice
+    [`${ useLanguageStore().text.battery }`, selectedData.value.energyKWh.split('.')[0] / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color3 for the third slice
+  ];
+
+  if (selectedData.value.energyKWh < 0.99) {
+    chartData.value = [
+      ["Type", "KWH"], // Add a new column for colors
+      ["No energy", 0.00001], // Use color1 for the first slice
+    ];
+  }
 });
+
+// watch(useTextStore(), async () => {
+//   textData.value = await useTextStore().$state.wpText[0].content.rendered;
+  
+// });
 
 watch(useDataTypeStore(), async () => {
   // console.log(dataType);
@@ -90,18 +112,18 @@ watch(useDataTypeStore(), async () => {
 
   accuracyData.value = [
     ["Name", "Accuracy"],
-    ["Accuracy", { v: selectedData.value.accuracy, f: "90%" }],
+    [`${ useLanguageStore().text.accuracy }`, { v: selectedData.value.accuracy, f: "90%" }],
     ["Rest", { v: 100 - 100 * (selectedData.value.accuracy / 100), f: "10%" }],
   ];
 
   chartData.value = [
     ["Type", "KWH", { role: "tooltip" }], // Add a new column for colors
-    ["Elnät", selectedData.value.energyKWh.split('.')[0] / 2, `${selectedData.value.energyKWh / 2} KWH`], // Use color1 for the first slice
-    ["Vätegas", selectedData.value.energyKWh.split('.')[0] / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color2 for the second slice
-    ["Batteri", selectedData.value.energyKWh.split('.')[0] / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color3 for the third slice
+    [`${ useLanguageStore().text.electricalGrid }`, selectedData.value.energyKWh.split('.')[0] / 2, `${selectedData.value.energyKWh / 2} KWH`], // Use color1 for the first slice
+    [`${ useLanguageStore().text.hydrogen }`, selectedData.value.energyKWh.split('.')[0] / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color2 for the second slice
+    [`${ useLanguageStore().text.battery }`, selectedData.value.energyKWh.split('.')[0] / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color3 for the third slice
   ];
 
-  if (selectedData.value.energyKWh == 0.0) {
+  if (selectedData.value.energyKWh < 0.99) {
     chartData.value = [
       ["Type", "KWH"], // Add a new column for colors
       ["No energy", 0.00001], // Use color1 for the first slice
@@ -163,47 +185,10 @@ function prevWeek() {
 /* //@ Other*
  */
 
-function removeYear(date) {
-  // 2024-01-01 -> 01-01
-  return date.split("-").slice(1).join("-");
-}
-
-function convertDate(date) {
-  if (!date) {
-    return ""; // or handle the case where date is undefined/null
-  }
-  const months = [
-    "Januari",
-    "Februari",
-    "Mär",
-    "April",
-    "Maj",
-    "Juni",
-    "Juli",
-    "Augusti",
-    "September",
-    "Oktober",
-    "November",
-    "December",
-  ];
-  const year = date.split("-")[0];
-  const day = date.split("-")[2];
-  return `${year} ${months[parseInt(date.split("-")[1]) - 1]} ${day}`;
-}
 
 function indexToMonth(index) {
   console.log(index)
   return ["Nan","Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ][index];
-}
-
-// function removeDashesFromDate(date) {
-//     // all dashes
-//     return date.split('-').join(' ');
-// }
-
-function replaceDashesWithDot(date) {
-  // all dashes
-  return date.split("-").join(".");
 }
 
 function weatherCodeToIcon(code) {
@@ -227,9 +212,9 @@ function weatherToColor(code) {
 /* chart*/
 const chartData = ref([
   ["Type", "KWH"], // Add a new column for colors
-  ["Elnät", 100], // Use color1 for the first slice
-  ["Vätegas", 20], // Use color2 for the second slice
-  ["Batteri", 20], // Use color3 for the third slice
+  [`${ useLanguageStore().text.electricalGrid }`, 100], // Use color1 for the first slice
+  [`${ useLanguageStore().text.hydrogen }`, 20], // Use color2 for the second slice
+  [`${ useLanguageStore().text.battery }`, 20], // Use color3 for the third slice
 ]);
 
 const chartOptions = ref({
@@ -252,7 +237,7 @@ const chartType = ref("PieChart");
 
 const accuracyData = ref([
   ["Name", "Accuracy"],
-  ["Accuracy", { v: selectedData.accuracy, f: "90%" }],
+  [`${ useLanguageStore().text.accuracy }`, { v: selectedData.accuracy, f: "90%" }],
   ["Rest", { v: 0.1, f: "10%" }],
 ]);
 const accuracyOptions = ref({
@@ -277,7 +262,7 @@ const accuracyType = ref("PieChart");
 </script>
 
 <template>
-  <div class="container mt-5">
+  <div class="container my-5">
     <!-- <p class="w-100 dateTop text-muted">
       {{ convertDate(selectedData.date) }} <br />
       {{ selectedData.age }}
@@ -359,7 +344,7 @@ const accuracyType = ref("PieChart");
                 ⚡
               </p>
                 <p class="w-100 text-center" style="font-size: 1.4rem;">{{ selectedData.energyKWh }}KWH</p>
-                Energy Production
+                {{ useLanguageStore().text.energy }}
             </div>
           </div>
 
@@ -374,7 +359,8 @@ const accuracyType = ref("PieChart");
                 alt=""
               />
                 <p class="w-100 text-center" style="font-size: 1.4rem;">{{ selectedData.temperature }}°C</p>
-                Temperature
+                {{ useLanguageStore().text.temp }}
+                <!-- en, sv -->
             </div>
           </div>
 
@@ -389,7 +375,9 @@ const accuracyType = ref("PieChart");
               :data="accuracyData"
               :options="accuracyOptions"
             ></GChart>
-            <p class="text-center mt-1">Accuracy</p>
+            <p class="text-center mt-1">
+              {{ useLanguageStore().text.accuracy }}
+              </p>
           </div>
 
           <div class="row mx-auto">

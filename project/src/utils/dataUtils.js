@@ -75,7 +75,7 @@ export function processDailyData(weatherData) {
     
             let accuracy = 100;
             if (age === 'current') {
-              accuracy = 99;
+              accuracy = 95;
             }
             if (age === 'past') {
               accuracy = 100;

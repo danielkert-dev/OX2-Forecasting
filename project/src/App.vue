@@ -3,6 +3,7 @@ import { RouterView, RouterLink } from "vue-router";
 import { Transition } from "vue";
 import NavComp from "./components/global/NavComp.vue";
 import LoadingComp from "./components/global/LoadingComp.vue";
+import { useLanguageStore } from "./stores/LanguageStore";
 import { useDataTypeStore } from "./stores/DataTypeStore";
 
 const udts = useDataTypeStore();
@@ -27,10 +28,10 @@ function resetDataType() {
         to="/"
         class="m-2 text-decoration-none text-light footer-text"
         @click="resetDataType()"
-        >Home</RouterLink
+        >{{ useLanguageStore().text.home }}</RouterLink
       >
       <RouterLink to="/about" class="m-2 text-decoration-none text-light footer-text"
-        >About</RouterLink
+        >{{ useLanguageStore().text.about }}</RouterLink
       >
     </footer>
 

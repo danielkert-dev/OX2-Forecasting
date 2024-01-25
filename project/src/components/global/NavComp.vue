@@ -6,6 +6,8 @@ const router = useRouter();
 import { useDataTypeStore } from "../../stores/DataTypeStore";
 import WpAPIComp from "../../components/global/WpAPIComp.vue";
 import { useDataStore } from "../../stores/DataStore";
+import { useLanguageStore } from "../../stores/LanguageStore";
+
 
 const udts = useDataTypeStore();
 const dataType = ref(udts.dataType);
@@ -85,9 +87,9 @@ watch(
         style="width: 10rem; height: fit-content;"
         @change="goToView(dataType)"
       >
-        <option value="hourly" :selected="dataType === 'hourly'">Hourly</option>
-        <option value="daily" :selected="dataType === 'daily'">Daily</option>
-        <option value="monthly" :selected="dataType === 'monthly'">Monthly</option>
+        <option value="hourly" :selected="dataType === 'hourly'">{{ useLanguageStore().text.hourly }}</option>
+        <option value="daily" :selected="dataType === 'daily'">{{ useLanguageStore().text.daily }}</option>
+        <option value="monthly" :selected="dataType === 'monthly'">{{ useLanguageStore().text.monthly }}</option>
         <!-- <option value="yearly" :selected="dataType === 'yearly'" disabled>Yearly</option> -->
       </select>
 
@@ -122,18 +124,18 @@ watch(
             style="width: 10rem; height: fit-content"
             class="custom-select dark-mode form-control dateSelectMonthly ms-1 my-auto"
           >
-            <option value="0">Februari</option>
-            <option value="1">Mars</option>
-            <option value="2">April</option>
-            <option value="3">Maj</option>
-            <option value="4">Juni</option>
-            <option value="5">Juli</option>
-            <option value="6">Augusti</option>
-            <option value="7">September</option>
-            <option value="8">Oktober</option>
-            <option value="9">November</option>
-            <option value="10">December</option>
-            <option value="11">Januari</option>
+            <option value="0">{{ useLanguageStore().text.february }}</option>
+            <option value="1">{{ useLanguageStore().text.march }}</option>
+            <option value="2">{{ useLanguageStore().text.april }}</option>
+            <option value="3">{{ useLanguageStore().text.may }}</option>
+            <option value="4">{{ useLanguageStore().text.june }}</option>
+            <option value="5">{{ useLanguageStore().text.july }}</option>
+            <option value="6">{{ useLanguageStore().text.august }}</option>
+            <option value="7">{{ useLanguageStore().text.september }}</option>
+            <option value="8">{{ useLanguageStore().text.october }}</option>
+            <option value="9">{{ useLanguageStore().text.november }}</option>
+            <option value="10">{{ useLanguageStore().text.december }}</option>
+            <option value="11">{{ useLanguageStore().text.january }}</option>
           </select>
         </div>
       </div>

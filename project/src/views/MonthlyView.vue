@@ -7,6 +7,7 @@ import { desciptionFromEnergy } from "../components/DescriptionComp";
 import { useTextStore } from "../stores/TextStore.js";
 import { useDataStore } from "../stores/DataStore.js";
 import { useDataTypeStore } from "../stores/DataTypeStore";
+import { useLanguageStore } from "../stores/LanguageStore";
 
 import { GChart } from "vue-google-charts";
 import { Swiper, SwiperSlide } from "swiper/vue";
@@ -58,7 +59,7 @@ onMounted(async () => {
 
   accuracyData.value = [
     ["Name", "Accuracy"],
-    ["Accuracy", { v: selectedData.value.accuracy, f: "90%" }],
+    [`${ useLanguageStore().text.accuracy }`, { v: selectedData.value.accuracy, f: "90%" }],
     ["Rest", { v: 100 - 100 * (selectedData.value.accuracy / 100), f: "10%" }],
   ];
 
@@ -78,6 +79,27 @@ watch(selectedDate, () => {
 
 });
 
+watch(useLanguageStore(), async () => {
+  accuracyData.value = [
+    ["Name", "Accuracy"],
+    [`${ useLanguageStore().text.accuracy }`, { v: selectedData.value.accuracy, f: "90%" }],
+    ["Rest", { v: 100 - 100 * (selectedData.value.accuracy / 100), f: "10%" }],
+  ];
+  chartData.value = [
+    ["Type", "KWH", { role: "tooltip" }], // Add a new column for colors
+    [`${ useLanguageStore().text.electricalGrid }`, selectedData.value.energyKWh / 2, `${selectedData.value.energyKWh / 2} KWH`], // Use color1 for the first slice
+    [`${ useLanguageStore().text.hydrogen }`, selectedData.value.energyKWh / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color2 for the second slice
+    [`${ useLanguageStore().text.battery }`, selectedData.value.energyKWh / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color3 for the third slice
+  ];
+
+  if (selectedData.value.energyKWh < 0.99) {
+    chartData.value = [
+      ["Type", "KWH"], // Add a new column for colors
+      ["No energy", 0.00001], // Use color1 for the first slice
+    ];
+  }
+});
+
 watch(useDataTypeStore() , async () => {
   selectedDate.value = udts.selectedDate
   selectedData.value = monthlyData.value[Number(selectedDate.value)]
@@ -85,20 +107,18 @@ watch(useDataTypeStore() , async () => {
   
   accuracyData.value = [
     ["Name", "Accuracy"],
-    ["Accuracy", { v: selectedData.value.accuracy, f: "90%" }],
+    [`${ useLanguageStore().text.accuracy }`, { v: selectedData.value.accuracy, f: "90%" }],
     ["Rest", { v: 100 - 100 * (selectedData.value.accuracy / 100), f: "10%" }],
   ];
 
-  
   chartData.value = [
     ["Type", "KWH", { role: "tooltip" }], // Add a new column for colors
-    ["Elnät", selectedData.value.energyKWh / 2, `${selectedData.value.energyKWh / 2} KWH`], // Use color1 for the first slice
-    ["Vätegas", selectedData.value.energyKWh / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color2 for the second slice
-    ["Batteri", selectedData.value.energyKWh / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color3 for the third slice
+    [`${ useLanguageStore().text.electricalGrid }`, selectedData.value.energyKWh / 2, `${selectedData.value.energyKWh / 2} KWH`], // Use color1 for the first slice
+    [`${ useLanguageStore().text.hydrogen }`, selectedData.value.energyKWh / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color2 for the second slice
+    [`${ useLanguageStore().text.battery }`, selectedData.value.energyKWh / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color3 for the third slice
   ];
 
-
-  if (selectedData.value.energyKWh == 0.0) {
+  if (selectedData.value.energyKWh < 0.99) {
     chartData.value = [
       ["Type", "KWH"], // Add a new column for colors
       ["No energy", 0.00001], // Use color1 for the first slice
@@ -139,17 +159,20 @@ function getRef(swiperInstance) {
 
 function indexToMonth(index) {
   console.log(index)
-  return ["Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan" ][index];
+  return ["Feb", "Mar", "Apr", `${ useLanguageStore().text.may }`, "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan" ][index];
 }
 
+function monthColor(index) {
+  // Vår : #8FDBB9 Sommar : #FFD700 höst: #FF4500 Vinter : #ADD8E6 
+  return ["#8FDBB9", "#8FDBB9", "#8FDBB9", "#FFD700", "#FFD700", "#FFD700", "#FF4500", "#FF4500", "#FF4500", "#ADD8E6", "#ADD8E6", "#ADD8E6"][index];
+}
 
-/* Chart */
-
+/* chart*/
 const chartData = ref([
   ["Type", "KWH"], // Add a new column for colors
-  ["Elnät", 100], // Use color1 for the first slice
-  ["Vätegas", 20], // Use color2 for the second slice
-  ["Batteri", 20], // Use color3 for the third slice
+  [`${ useLanguageStore().text.electricalGrid }`, 100], // Use color1 for the first slice
+  [`${ useLanguageStore().text.hydrogen }`, 20], // Use color2 for the second slice
+  [`${ useLanguageStore().text.battery }`, 20], // Use color3 for the third slice
 ]);
 
 const chartOptions = ref({
@@ -172,7 +195,7 @@ const chartType = ref("PieChart");
 
 const accuracyData = ref([
   ["Name", "Accuracy"],
-  ["Accuracy", { v: selectedData.accuracy, f: "90%" }],
+  [`${ useLanguageStore().text.accuracy }`, { v: selectedData.accuracy, f: "90%" }],
   ["Rest", { v: 0.1, f: "10%" }],
 ]);
 const accuracyOptions = ref({
@@ -199,7 +222,7 @@ const accuracyType = ref("PieChart");
 </script>
 
 <template>
-  <div class="container mt-5">
+  <div class="container my-5">
   <!-- {{ monthlyData }} -->
 
   <swiper
@@ -232,10 +255,11 @@ const accuracyType = ref("PieChart");
                   <div
             class="mySlideData d-flex align-items-end justify-content-center rounded"
             :style="{
-              backgroundColor: `rgba(50, ${data.energyKWh * .2}, 50, .8)`,
+              backgroundColor: `${monthColor(data.num)}`,
               height: `${data.energyKWh * .06}px`,
             }"
           >
+          {{ console.log(monthColor(data.num)) }}
           <!-- <span class="text-muted">{{ data.energyKWh }}</span> -->
           <span class="mySliderDate text-center" style="font-size: .8rem">
             <b>{{ indexToMonth(data.num) }}</b><br>
@@ -280,7 +304,7 @@ const accuracyType = ref("PieChart");
                 ⚡
               </p>
                 <p class="w-100 text-center" style="font-size: 1.4rem;">{{ selectedData.energyKWh }}KWH</p>
-                Energy Production
+                {{ useLanguageStore().text.energy }}
             </div>
           </div>
 
@@ -293,7 +317,7 @@ const accuracyType = ref("PieChart");
               ☀️
               </p>
                 <p class="w-100 text-center" style="font-size: 1.4rem;">{{ selectedData.dailysunhours }}h</p>
-                Daily Sun Hours
+                {{ useLanguageStore().text.sun }}
             </div>
           </div>
 
@@ -308,7 +332,9 @@ const accuracyType = ref("PieChart");
               :data="accuracyData"
               :options="accuracyOptions"
             ></GChart>
-            <p class="text-center mt-1">Accuracy</p>
+            <p class="text-center mt-1">
+              {{ useLanguageStore().text.accuracy }}
+            </p>
           </div>
 
           </div>
@@ -324,6 +350,7 @@ const accuracyType = ref("PieChart");
                 :options="chartOptions"
               ></GChart>
             </div>
+
 
             <div class="col-md-6 p-5 d-flex flex-column justify-content-center align-items-center">
               <br />
@@ -472,5 +499,9 @@ $text-color: #f8f7f6;
 .infoBox {
   background-color: $text-color;
   min-height: 10rem;
+}
+
+.shareChart {
+  margin-top: 2rem;
 }
 </style>

@@ -34,6 +34,10 @@ const selectedLanguage = ref(useLanguageStore().getLanguage());
 let posts = ref({});
 let categories = ref({});
 
+onMounted(async () => {
+  await useLanguageStore().setText(selectedLanguage.value);
+})
+
 /* //@ Methods
  */
 
@@ -88,6 +92,7 @@ watch(endpointCategories, async (newEndpoint) => {
 
 function updateLanguage() {
   useLanguageStore().setLanguage(selectedLanguage.value);
+  useLanguageStore().setText(selectedLanguage.value);
 }
 
 function setToTextStore() {

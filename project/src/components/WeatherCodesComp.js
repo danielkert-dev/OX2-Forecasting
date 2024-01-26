@@ -304,6 +304,7 @@ export const weatherCodes = [{
 	"95":{
 		"day":{
 			"description":"Thunderstorm",
+			"color": "#2c3449",
 			"image":"https://www.datanom.ax/~kjell/ox2/wp-content/uploads/2024/01/thunderstorm.png"
 		},
 		"night":{
@@ -314,6 +315,7 @@ export const weatherCodes = [{
 	"96":{
 		"day":{
 			"description":"Light Thunderstorms With Hail",
+			"color": "#2c3449",
 			"image":"https://www.datanom.ax/~kjell/ox2/wp-content/uploads/2024/01/thunderstorm.png"
 		},
 		"night":{
@@ -324,6 +326,7 @@ export const weatherCodes = [{
 	"99":{
 		"day":{
 			"description":"Thunderstorm With Hail",
+			"color": "#2c3449",
 			"image":"https://www.datanom.ax/~kjell/ox2/wp-content/uploads/2024/01/thunderstorm.png"
 		},
 		"night":{

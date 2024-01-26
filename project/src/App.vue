@@ -30,6 +30,12 @@ function resetDataType() {
         @click="resetDataType()"
         >{{ useLanguageStore().text.home }}</RouterLink
       >
+
+      <RouterLink 
+          to="/history" 
+          class="m-2 text-decoration-none text-light footer-text">
+          History</RouterLink>
+
       <RouterLink to="/about" class="m-2 text-decoration-none text-light footer-text"
         >{{ useLanguageStore().text.about }}</RouterLink
       >
@@ -114,6 +120,7 @@ footer {
 .fade-leave-active {
   transition: all 0.1s ease;
   transform: translateY(10px);
+  filter: blur(10px);
 }
 
 .fade-enter-from,

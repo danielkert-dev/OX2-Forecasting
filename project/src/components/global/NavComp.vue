@@ -190,7 +190,7 @@ nav {
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
-  z-index: 2;
+  z-index: 11;
   user-select: none;
   pointer-events: none;
   // filter:drop-shadow(0 0 1rem $main-color);

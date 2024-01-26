@@ -8,15 +8,14 @@
 import { ref, onMounted, computed, watch } from "vue";
 import { useWpAPIStore } from "../../stores/WpAPIStore.js";
 import { useLanguageStore } from "../../stores/LanguageStore.js";
-import { useTextStore } from "../../stores/TextStore.js";
-import { useRouter } from "vue-router";
-const router = useRouter();
+// import { useTextStore } from "../../stores/TextStore.js";
+// import { useRouter } from "vue-router";
+// const router = useRouter();
 
 /* //@ Variables 
     - Set path and queries
 */
 
-const endpointPosts = "posts?categories=";
 
 const endpointCategories = computed(() => {
   const language = useLanguageStore().getLanguage();
@@ -30,74 +29,65 @@ const endpointCategories = computed(() => {
   }
 });
 
-const selectedLanguage = ref(useLanguageStore().getLanguage());
-let posts = ref({});
-let categories = ref({});
+const data = ref([]);
 
+const selectedLanguage = ref(useLanguageStore().getLanguage());
 onMounted(async () => {
   await useLanguageStore().setText(selectedLanguage.value);
+
+  if (selectedLanguage.value === "en") {
+  try {
+    data.value = await useWpAPIStore().fetchData("posts?categories=9", "");
+    useLanguageStore().setTextAbout(data.value);
+  } catch (error) {
+    console.error(error.message);
+  }
+   
+ } else if (selectedLanguage.value === "sv") {
+  try {
+    data.value = await useWpAPIStore().fetchData("posts?categories=31", "");
+    useLanguageStore().setTextAbout(data.value);
+  } catch (error) {
+    console.error(error.message);
+  }
+ }
 })
 
 /* //@ Methods
  */
 
-async function setText() {
-  try {
-    categories.value = await useWpAPIStore().fetchData(endpointCategories.value, "");
-    posts.value = await useWpAPIStore().fetchData(
-      endpointPosts + categories.value[0].id,
-      ""
-    );
-    setToTextStore();
-  } catch (error) {
-    console.error(error.message);
-  }
-}
-setText();
-
-watch(
-  () => router.currentRoute.value,
-  async () => {
-    try {
-      categories.value = await useWpAPIStore().fetchData(endpointCategories.value, "");
-      posts.value = await useWpAPIStore().fetchData(
-        endpointPosts + categories.value[0].id,
-        ""
-      );
-      setToTextStore();
-    } catch (error) {
-      console.error(error.message);
-    }
-  }
-);
 
 /* //@ Watchers
  */
 
-watch(endpointCategories, async (newEndpoint) => {
+watch(selectedLanguage, async () => {
+ if (selectedLanguage.value === "en") {
   try {
-    categories.value = await useWpAPIStore().fetchData(newEndpoint, "");
-    posts.value = await useWpAPIStore().fetchData(
-      endpointPosts + categories.value[0].id,
-      ""
-    );
-    setToTextStore();
+    data.value = await useWpAPIStore().fetchData("posts?categories=9", "");
+    useLanguageStore().setTextAbout(data.value);
   } catch (error) {
     console.error(error.message);
   }
+   
+ } else if (selectedLanguage.value === "sv") {
+  try {
+    data.value = await useWpAPIStore().fetchData("posts?categories=31", "");
+    useLanguageStore().setTextAbout(data.value);
+  } catch (error) {
+    console.error(error.message);
+  }
+ }
 });
 
 /* //@ Functions
  */
 
-function updateLanguage() {
+async function updateLanguage() {
   useLanguageStore().setLanguage(selectedLanguage.value);
   useLanguageStore().setText(selectedLanguage.value);
+
 }
 
-function setToTextStore() {
-  useTextStore().setText(posts.value);
-}
 </script>
 
 <template>

@@ -5,7 +5,6 @@ import { weatherCodes } from "../components/WeatherCodesComp.js";
 import { desciptionFromEnergy } from "../components/DescriptionComp";
 
 
-import { useTextStore } from "../stores/TextStore.js";
 import { useDataStore } from "../stores/DataStore.js";
 import { useDataTypeStore } from "../stores/DataTypeStore";
 import { useLanguageStore } from "../stores/LanguageStore";
@@ -58,6 +57,20 @@ const swiperRef = ref(null);
     [`${ useLanguageStore().text.accuracy }`, { v: selectedData.value.accuracy, f: "90%" }],
     ["Rest", { v: 100 - 100 * (selectedData.value.accuracy / 100), f: "10%" }],
   ];
+
+  chartData.value = [
+    ["Type", "KWH", { role: "tooltip" }], // Add a new column for colors
+    [`${ useLanguageStore().text.electricalGrid }`, selectedData.value.energyKWh / 2, `${selectedData.value.energyKWh / 2} KWH`], // Use color1 for the first slice
+    [`${ useLanguageStore().text.hydrogen }`, selectedData.value.energyKWh / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color2 for the second slice
+    [`${ useLanguageStore().text.battery }`, selectedData.value.energyKWh / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color3 for the third slice
+  ];
+
+  if (selectedData.value.energyKWh < 0.99) {
+    chartData.value = [
+      ["Type", "KWH"], // Add a new column for colors
+      ["No energy", 0.00001], // Use color1 for the first slice
+    ];
+  }
 
   
   nextTick(() => {
@@ -137,6 +150,8 @@ function weatherCodeToIcon(code) {
     return ""; // or handle the case where date is undefined/null
   }
   const weatherCode = weatherCodes[0][code];
+  console.log(code)
+  console.log(weatherCode)
   return weatherCode.day.image;
 }
 
@@ -285,7 +300,7 @@ const accuracyType = ref("PieChart");
             }"
           >
 
-          {{ console.log(weatherToColor(data.weather) || '##293650') }}
+          {{ console.log(data.weather) }}
           <!-- <span class="text-muted">{{ data.energyKWh }}</span> -->
           <span class="mySliderDate text-center" style="font-size: .8rem">
               <b>{{ new Date(data.date).getHours() + ":00" }}</b><br>
@@ -372,12 +387,10 @@ const accuracyType = ref("PieChart");
             <div class="col-md-6 p-5 d-flex flex-column justify-content-center align-items-center">
               <br />
               <!-- From wordpress add text with integrated data -->
-              <p class="" style="font-size: 1.5rem"> 
-                {{ desciptionFromEnergy(selectedData.energyKWh) }}
+              <p class="text-center" style="font-size: 1.5rem"> 
+                <div v-html="desciptionFromEnergy(selectedData.energyKWh)"></div>
+                <!-- {{ desciptionFromEnergy(selectedData.energyKWh) }} -->
               </p>
-              <div class="">
-                Image
-              </div>
             </div>
           </div>
         </div>

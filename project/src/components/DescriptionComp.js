@@ -10,31 +10,31 @@ export function desciptionFromEnergy(energy) {
     if (energy < 2.5) {
         let pots = energy / 0.2;
         pots = Math.round((pots + Number.EPSILON)*100)/100;
-        return useLanguageStore().text.produce + pots + useLanguageStore().text.coffe
-    }
-
-    if (energy < 5) {
-        let hours = energy / 1.5;
-        hours = Math.round((hours + Number.EPSILON)*100)/100;
-        return useLanguageStore().text.microwave + hours + useLanguageStore().text.hours
+        return useLanguageStore().text.produce + pots + useLanguageStore().text.coffe + "<br>☕"
     }
 
     if (energy < 10) {
-        let kettles = energy / 2.5;
-        kettles = Math.round((kettles + Number.EPSILON)*100)/100;
-        return useLanguageStore().text.kettle + kettles + useLanguageStore().text.hours
+        let hours = energy / 1.5;
+        hours = Math.round((hours + Number.EPSILON)*100)/100;
+        return useLanguageStore().text.microwave + hours + useLanguageStore().text.hours + "<br>🍳"
     }
+
+    // if (energy < 10) {
+    //     let kettles = energy / 2.5;
+    //     kettles = Math.round((kettles + Number.EPSILON)*100)/100;
+    //     return useLanguageStore().text.kettle + kettles + useLanguageStore().text.hours + ""
+    // }
 
     if (energy < 100) {
         let km = energy / 5.7;
         km = Math.round((km + Number.EPSILON)*100)/100;
-        return useLanguageStore().text.tesla + km + " km"
+        return useLanguageStore().text.tesla + km + " km <br>🚗"
     }
 
     if (energy > 100) {
         let houses = energy / 35;
         houses = Math.round((houses + Number.EPSILON)*100)/100;
-        return useLanguageStore().text.household + houses + useLanguageStore().text.days
+        return useLanguageStore().text.household + houses + useLanguageStore().text.days + "<br>🏚️"
     }
 }
 

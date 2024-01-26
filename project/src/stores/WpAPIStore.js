@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { loadingStore } from './LoadingStore.js';
 
 const API_BASE_URL = 'https://www.datanom.ax/~kjell/ox2/wp-json/wp/v2/';
 
@@ -18,9 +17,6 @@ export const useWpAPIStore = defineStore('wpAPI', {
         }
 
         const data = await response.json();
-        setTimeout(() => {
-          loadingStore().setLoaded();
-        }, 600);
         return data;
       } catch (error) {
         console.error(error);

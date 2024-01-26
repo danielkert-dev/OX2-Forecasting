@@ -63,6 +63,20 @@ onMounted(async () => {
     ["Rest", { v: 100 - 100 * (selectedData.value.accuracy / 100), f: "10%" }],
   ];
 
+  chartData.value = [
+    ["Type", "KWH", { role: "tooltip" }], // Add a new column for colors
+    [`${ useLanguageStore().text.electricalGrid }`, selectedData.value.energyKWh / 2, `${selectedData.value.energyKWh / 2} KWH`], // Use color1 for the first slice
+    [`${ useLanguageStore().text.hydrogen }`, selectedData.value.energyKWh / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color2 for the second slice
+    [`${ useLanguageStore().text.battery }`, selectedData.value.energyKWh / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color3 for the third slice
+  ];
+
+  if (selectedData.value.energyKWh < 0.99) {
+    chartData.value = [
+      ["Type", "KWH"], // Add a new column for colors
+      ["No energy", 0.00001], // Use color1 for the first slice
+    ];
+  }
+
   nextTick(() => {
     if (swiperRef.value && swiperRef.value.swiper) {
       swiperRef.value.swiper.update();
@@ -164,7 +178,7 @@ function indexToMonth(index) {
 
 function monthColor(index) {
   // Vår : #8FDBB9 Sommar : #FFD700 höst: #FF4500 Vinter : #ADD8E6 
-  return ["#8FDBB9", "#8FDBB9", "#8FDBB9", "#FFD700", "#FFD700", "#FFD700", "#FF4500", "#FF4500", "#FF4500", "#ADD8E6", "#ADD8E6", "#ADD8E6"][index];
+  return [ "#8FDBB9", "#8FDBB9", "#FFD700", "#FFD700", "#FFD700", "#FF4500", "#FF4500", "#FF4500", "#ADD8E6", "#ADD8E6", "#ADD8E6", "#8FDBB9"][index];
 }
 
 /* chart*/
@@ -355,12 +369,10 @@ const accuracyType = ref("PieChart");
             <div class="col-md-6 p-5 d-flex flex-column justify-content-center align-items-center">
               <br />
               <!-- From wordpress add text with integrated data -->
-              <p class="" style="font-size: 1.5rem"> 
-                {{ desciptionFromEnergy(selectedData.energyKWh) }}
+              <p class="text-center" style="font-size: 1.5rem"> 
+                <div v-html="desciptionFromEnergy(selectedData.energyKWh)"></div>
+                <!-- {{ desciptionFromEnergy(selectedData.energyKWh) }} -->
               </p>
-              <div class="">
-                Image
-              </div>
             </div>
           </div>
         </div>

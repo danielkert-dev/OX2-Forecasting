@@ -1,11 +1,13 @@
 import { defineStore } from 'pinia'
 import { textdata } from "../components/TextDataComp";
+import { loadingStore } from '../stores/LoadingStore.js';
 
 
 export const useLanguageStore = defineStore('language', {
     state: () => ({
         language: 'en',
         text: {},
+        about: "",
         textEn: {},
     }),
     actions: {
@@ -16,7 +18,14 @@ export const useLanguageStore = defineStore('language', {
         setText(language) {
             console.log(language);
             this.text = textdata[0][language];
-          },
+            setTimeout(() => {
+                loadingStore().setLoaded();
+              }, 500);
+        },
+
+        setTextAbout(language) {
+        this.about = language;
+        },
 
         getLanguage() {
             return this.language;

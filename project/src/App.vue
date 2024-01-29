@@ -31,10 +31,10 @@ function resetDataType() {
         >{{ useLanguageStore().text.home }}</RouterLink
       >
 
-      <RouterLink 
+      <!-- <RouterLink 
           to="/history" 
           class="m-2 text-decoration-none text-light footer-text">
-          History</RouterLink>
+          History</RouterLink> -->
 
       <RouterLink to="/about" class="m-2 text-decoration-none text-light footer-text"
         >{{ useLanguageStore().text.about }}</RouterLink

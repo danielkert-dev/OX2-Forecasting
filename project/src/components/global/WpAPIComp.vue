@@ -24,7 +24,11 @@ const endpointCategories = computed(() => {
     return endpointCategoriesPre + "en";
   } else if (language === "sv") {
     return endpointCategoriesPre + "sv";
-  } else {
+  } 
+  else if (language === "fi") {
+    return endpointCategoriesPre + "fi";
+  }
+  else {
     return console.error("Language not found");
   }
 });
@@ -50,7 +54,24 @@ onMounted(async () => {
   } catch (error) {
     console.error(error.message);
   }
- }
+ } 
+ else if (selectedLanguage.value === "fi") {
+  try {
+    data.value = [await useWpAPIStore().fetchData("posts/594", "")];
+    useLanguageStore().setTextAbout(data.value);
+  } catch (error) {
+    console.error(error.message);
+  }
+ } 
+//  else if (selectedLanguage.value === "fi") {
+//   // https://www.datanom.ax/~kjell/ox2/wp-json/wp/v2/posts/594
+//   try {
+//     data.value = await useWpAPIStore().fetchData("posts?categories=594", "");
+//     useLanguageStore().setTextAbout(data.value);
+//   } catch (error) {
+//     console.error(error.message);
+//   }
+//  }
 })
 
 /* //@ Methods
@@ -76,7 +97,25 @@ watch(selectedLanguage, async () => {
   } catch (error) {
     console.error(error.message);
   }
- }
+ } 
+ 
+ else if (selectedLanguage.value === "fi") {
+  try {
+    data.value = [await useWpAPIStore().fetchData("posts/594", "")];
+    useLanguageStore().setTextAbout(data.value);
+  } catch (error) {
+    console.error(error.message);
+  }
+ } 
+//  else if (selectedLanguage.value === "fi") {
+//   // https://www.datanom.ax/~kjell/ox2/wp-json/wp/v2/posts/594
+//   try {
+//     data.value = await useWpAPIStore().fetchData("posts?categories=594", "");
+//     useLanguageStore().setTextAbout(data.value);
+//   } catch (error) {
+//     console.error(error.message);
+//   }
+//  }
 });
 
 /* //@ Functions
@@ -85,20 +124,23 @@ watch(selectedLanguage, async () => {
 async function updateLanguage() {
   useLanguageStore().setLanguage(selectedLanguage.value);
   useLanguageStore().setText(selectedLanguage.value);
-
 }
 
 </script>
 
 <template>
   <div class="h-100 d-flex flex-wrap justify-content-center align-content-center">
-    <select
+    <img src="https://www.datanom.ax/~kjell/ox2/wp-content/uploads/2024/01/Asset-1@100x.png" class="lang-img" v-if="selectedLanguage === 'en'">
+    <img src="https://www.datanom.ax/~kjell/ox2/wp-content/uploads/2024/01/Asset-2@100x-1.png" class="lang-img" v-if="selectedLanguage === 'sv'">
+    <img src="https://www.datanom.ax/~kjell/ox2/wp-content/uploads/2024/01/Artboard-1-1.png" class="lang-img" v-if="selectedLanguage === 'fi'">
+      <select
       class="custom-select lang-select rounded"
       v-model="selectedLanguage"
       @change="updateLanguage"
     >
       <option value="en">En</option>
       <option value="sv">Sv</option>
+      <option value="fi">Fi</option>
     </select>
   </div>
 </template>
@@ -125,7 +167,23 @@ $nav-color: #354A48;
   -moz-appearance: none;
   appearance: none;
   filter:brightness(1.2);
+  opacity: 0;
 }
+
+.lang-img {
+  width: 2rem;
+  height: 2rem;
+  position: absolute;
+  padding: 0;
+  margin: 0;
+  // translate: .7rem .2rem;
+  pointer-events: none;
+  z-index: 10;
+  right: .6rem;
+  margin-top: .2rem;
+}
+
+
 
 .lang-select:focus,
 .lang-select:active {

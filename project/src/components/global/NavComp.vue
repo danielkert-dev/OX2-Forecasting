@@ -16,6 +16,7 @@ const lastDate = ref(udts.lastDate);
 const selectedDate = ref(udts.selectedDate);
 
 function goToView(dataType) {
+  console.log(dataType)
   if (dataType === "daily") {
     router.push({ name: "main" });
   } else if ( dataType === "hourly") {
@@ -65,7 +66,7 @@ watch(
 <template>
   <span class="nav-img"></span>
   <nav class="d-flex navbar fixed-top ">
-    <div class="ms-2 iconWrap">
+    <div class="ms-2 iconWrap" @click="goToView('daily')">
       <h4 class="">
         <img
           style="margin-top: -0.2rem"
@@ -223,6 +224,7 @@ nav {
 
 .iconWrap {
   height: 4rem;
+  cursor: pointer;
 }
 
 

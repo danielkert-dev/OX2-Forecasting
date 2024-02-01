@@ -143,7 +143,7 @@ watch(useDataTypeStore() , async () => {
 
 // Functions
 const goToSlide = (index) => {
-  console.log(index)
+  // console.log(index)
   swiperRef.value.slideTo(index);
 };
 
@@ -171,8 +171,18 @@ function getRef(swiperInstance) {
   swiperRef.value = swiperInstance;
 }
 
+
 function indexToMonth(index) {
-  console.log(index)
+  if (useLanguageStore().language === "fi") {
+  return ["tammi", "helmi", "maalis", "huhti", "touko", "kesä", "heinä", "elo", "syys", "loka", "marras", "joulu"][index];
+}
+
+if (useLanguageStore().language === "sv") {
+  return ["Feb", "Mar", "Apr", `${ useLanguageStore().text.may }`, "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec", "Jan" ][index];
+}
+
+
+  // console.log(index)
   return ["Feb", "Mar", "Apr", `${ useLanguageStore().text.may }`, "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan" ][index];
 }
 
@@ -273,7 +283,7 @@ const accuracyType = ref("PieChart");
               height: `${data.energyKWh * .06}px`,
             }"
           >
-          {{ console.log(monthColor(data.num)) }}
+          <!-- {{ console.log(monthColor(data.num)) }} -->
           <!-- <span class="text-muted">{{ data.energyKWh }}</span> -->
           <span class="mySliderDate text-center" style="font-size: .8rem">
             <b>{{ indexToMonth(data.num) }}</b><br>
@@ -299,7 +309,7 @@ const accuracyType = ref("PieChart");
           </button>
   </div>
 
-    {{ console.log(selectedSlide) }}
+    <!-- {{ console.log(selectedSlide) }} -->
 
 
 

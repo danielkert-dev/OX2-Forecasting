@@ -14,6 +14,6 @@ watch(useLanguageStore(), async () => {
 
 <template>
     <div class="container text-center my-5 py-5">
-    <div class="w-50 mx-auto" v-html=" useLanguageStore().about[0].content.rendered"></div>
+    <div class="w-75 mx-auto" v-html=" useLanguageStore().about[0].content.rendered"></div>
     </div>
 </template>

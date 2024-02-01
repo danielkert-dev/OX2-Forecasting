@@ -3,7 +3,7 @@ import { useLanguageStore } from "../stores/LanguageStore";
 
 export function desciptionFromEnergy(energy) {
 
-    if (energy < 0.5) {
+    if (energy < 0.1) {
         return "No energy"
     }
 

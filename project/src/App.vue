@@ -1,12 +1,32 @@
 <script setup>
 import { RouterView, RouterLink } from "vue-router";
-import { Transition } from "vue";
+import { Transition, ref, watch } from "vue";
 import NavComp from "./components/global/NavComp.vue";
 import LoadingComp from "./components/global/LoadingComp.vue";
 import { useLanguageStore } from "./stores/LanguageStore";
 import { useDataTypeStore } from "./stores/DataTypeStore";
-
 const udts = useDataTypeStore();
+const dataType = ref("");
+import { useRouter } from "vue-router";
+const router = useRouter();
+
+
+watch(useDataTypeStore(), async () => {
+  console.log(useDataTypeStore().$state.dataType)
+})
+
+watch(
+  () => router.currentRoute.value,
+  () => {
+    // console.log(router.currentRoute.value.name);
+    if (router.currentRoute.value.name === "main") {
+      dataType.value = "daily";
+    } else {
+      dataType.value = router.currentRoute.value.name;
+    }
+  }
+);
+
 
 function resetDataType() {
   udts.dataType = "daily";
@@ -23,10 +43,12 @@ function resetDataType() {
   </transition>
 </router-view>
 
-    <footer class="text-center footer pt-3">
+    <footer class="text-center footer pt-3" :class="{ 'footer-dark': dataType === 'about' }">
+      <!-- {{ dataType }} -->
       <RouterLink
         to="/"
-        class="m-2 text-decoration-none text-light footer-text"
+        class="m-2 text-decoration-none footer-text"
+        :class="{ 'footer-dark': dataType === 'about' }"
         @click="resetDataType()"
         >{{ useLanguageStore().text.home }}</RouterLink
       >
@@ -36,7 +58,8 @@ function resetDataType() {
           class="m-2 text-decoration-none text-light footer-text">
           History</RouterLink> -->
 
-      <RouterLink to="/about" class="m-2 text-decoration-none text-light footer-text"
+      <RouterLink to="/about" class="m-2 text-decoration-none footer-text"
+      :class="{ 'footer-dark': dataType === 'about' }"
         >{{ useLanguageStore().text.about }}</RouterLink
       >
     </footer>
@@ -76,6 +99,11 @@ footer {
   color: $third-color !important;
  }
 
+ .footer-dark {
+  background-color: $third-color;
+  color: $text-color !important;
+ }
+
 @media screen and (max-width: 767px) {
 
   footer {
@@ -113,6 +141,13 @@ footer {
   html {
     display: none;
   }
+}
+
+@media screen and (max-height: 700px) {
+  html {
+    display: none;
+  }
+  
 }
 
 

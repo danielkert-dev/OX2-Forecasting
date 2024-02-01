@@ -100,7 +100,7 @@ watch(useLanguageStore(), async () => {
     [`${ useLanguageStore().text.battery }`, selectedData.value.energyKWh.split('.')[0] / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color3 for the third slice
   ];
 
-  if (selectedData.value.energyKWh < 0.99) {
+  if (selectedData.value.energyKWh <= 0.99) {
     chartData.value = [
       ["Type", "KWH"], // Add a new column for colors
       ["No energy", 0.00001], // Use color1 for the first slice
@@ -132,7 +132,7 @@ watch(useDataTypeStore(), async () => {
     [`${ useLanguageStore().text.battery }`, selectedData.value.energyKWh.split('.')[0] / 5, `${selectedData.value.energyKWh / 5} KWH`], // Use color3 for the third slice
   ];
 
-  if (selectedData.value.energyKWh < 0.99) {
+  if (selectedData.value.energyKWh <= 0.99) {
     chartData.value = [
       ["Type", "KWH"], // Add a new column for colors
       ["No energy", 0.00001], // Use color1 for the first slice
